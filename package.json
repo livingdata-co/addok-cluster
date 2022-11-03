@@ -1,0 +1,34 @@
+{
+  "name": "addok-cluster",
+  "version": "0.0.0",
+  "description": "Clustering addok geocoding capabilities from your Node.js process",
+  "main": "index.js",
+  "type": "module",
+  "repository": "https://github.com/livingdata-co/addok-cluster",
+  "author": "Jérôme Desboeufs <jerome@livingdata.co>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "lint": "xo"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "python-shell": "^3.0.1"
+  },
+  "devDependencies": {
+    "xo": "^0.52.4"
+  },
+  "xo": {
+    "semicolon": false,
+    "space": 2,
+    "rules": {
+      "comma-dangle": [
+        "error",
+        "never"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">= 18"
+  }
+}
