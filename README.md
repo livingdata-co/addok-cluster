@@ -1,6 +1,6 @@
 # addok-cluster
 
-A very fast and efficient way to access to [addok](https://github.com/addok/addok) geocoding capabilities in your Node.js process.
+A very fast and efficient way to use [addok](https://github.com/addok/addok) geocoding capabilities in your Node.js process.
 
 ## Features
 
