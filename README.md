@@ -105,3 +105,9 @@ Define the priority level of the request. Requests are processed following FIFO 
 `signal`: `AbortSignal` instance (optional)
 
 If an `AbortSignal` instance is provided, its status is checked just before forwarding to addok.
+
+### Stop cluster
+
+```js
+cluster.end()
+```
