@@ -12,8 +12,10 @@
     "lint": "xo"
   },
   "dependencies": {
+    "debug": "^4.3.4",
     "lodash-es": "^4.17.21",
-    "python-shell": "^3.0.1"
+    "python-shell": "^3.0.1",
+    "supports-color": "^9.2.3"
   },
   "devDependencies": {
     "xo": "^0.52.4"
