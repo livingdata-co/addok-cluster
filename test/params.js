@@ -69,7 +69,7 @@ test('validateFilters', t => {
   t.throws(() => validateFilters('a'))
 })
 
-test('validateParams', t => {
+test('validateParams / all params', t => {
   t.deepEqual(validateParams({
     foo: 'bar',
     filters: {foo: 'baz'},
@@ -86,6 +86,12 @@ test('validateParams', t => {
     lat: 60,
     q: 'foobar'
   })
+})
 
+test('validateParams / invalid param', t => {
   t.throws(() => validateParams({limit: 0}))
+})
+
+test('validateParams / no params', t => {
+  t.deepEqual(validateParams({}), {})
 })
