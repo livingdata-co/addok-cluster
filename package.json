@@ -1,6 +1,6 @@
 {
   "name": "addok-cluster",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Clustering addok geocoding capabilities from your Node.js process",
   "main": "index.js",
   "type": "module",
