@@ -8,6 +8,10 @@
   "author": "Jérôme Desboeufs <jerome@livingdata.co>",
   "license": "MIT",
   "private": false,
+  "files": [
+    "lib",
+    "index.js"
+  ],
   "scripts": {
     "lint": "xo",
     "test": "c8 --all ava",
