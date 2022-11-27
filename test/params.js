@@ -95,3 +95,7 @@ test('validateParams / invalid param', t => {
 test('validateParams / no params', t => {
   t.deepEqual(validateParams({}), {})
 })
+
+test('validateParams / required params', t => {
+  t.throws(() => validateParams({limit: 3}, ['q']))
+})
