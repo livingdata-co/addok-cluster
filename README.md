@@ -1,5 +1,7 @@
 # addok-cluster
 
+[![Coverage Status](https://coveralls.io/repos/github/livingdata-co/addok-cluster/badge.svg)](https://coveralls.io/github/livingdata-co/addok-cluster)
+
 A very fast and efficient way to use [addok](https://github.com/addok/addok) geocoding capabilities in your Node.js process.
 
 ## Features
