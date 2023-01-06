@@ -38,6 +38,7 @@ const cluster = await createCluster(options)
 | `PYTHON_PATH` | `pythonPath` | Path to `python` executable to use |
 | `ADDOK_CLUSTER_NUM_NODES` | `numNodes` | Number of nodes to instantiate (default to number of CPUs) |
 | `ADDOK_CONFIG_MODULE` | `addokConfigModule` | Path to addok configuration file |
+| `ADDOK_REDIS_URL` | `addokRedisUrl` | Connection string to addok Redis instance (can be an array) |
 
 ## Use
 
