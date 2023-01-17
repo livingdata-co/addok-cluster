@@ -65,6 +65,7 @@ test('validateLonLat', t => {
 test('validateFilters', t => {
   t.deepEqual(validateFilters({}), {})
   t.deepEqual(validateFilters({foo: 'bar'}), {foo: 'bar'})
+  t.deepEqual(validateFilters({foo: 'bar', cat: ''}), {foo: 'bar'})
 
   t.throws(() => validateFilters('a'))
 })
