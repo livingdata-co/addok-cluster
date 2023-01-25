@@ -54,6 +54,7 @@ test('validateAutocomplete', t => {
 test('validateLonLat', t => {
   t.deepEqual(validateLonLat(1, 1), [1, 1])
   t.deepEqual(validateLonLat(10.5, 10), [10.5, 10])
+  t.deepEqual(validateLonLat(0, 10.5), [0, 10.5])
 
   t.throws(() => validateLonLat(1, null))
   t.throws(() => validateLonLat(null, 1))
