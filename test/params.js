@@ -21,12 +21,12 @@ test('validateQ', t => {
   t.is(validateQ('foo'), 'foo')
   t.is(validateQ(' foo'), 'foo')
 
-  t.throws(() => validateQ(null))
-  t.throws(() => validateQ(1))
-  t.throws(() => validateQ(''))
-  t.throws(() => validateQ('a'))
-  t.throws(() => validateQ('aa'))
-  t.throws(() => validateQ('-aaa'))
+  t.throws(() => validateQ(null), {message: 'q must be a string'})
+  t.throws(() => validateQ(1), {message: 'q must be a string'})
+  t.throws(() => validateQ(''), {message: 'q must contain between 3 and 200 chars and start with a number or a letter'})
+  t.throws(() => validateQ('a'), {message: 'q must contain between 3 and 200 chars and start with a number or a letter'})
+  t.throws(() => validateQ('aa'), {message: 'q must contain between 3 and 200 chars and start with a number or a letter'})
+  t.throws(() => validateQ('-aaa'), {message: 'q must contain between 3 and 200 chars and start with a number or a letter'})
 })
 
 test('validateLimit', t => {
@@ -34,21 +34,21 @@ test('validateLimit', t => {
   t.is(validateLimit(5), 5)
   t.is(validateLimit(100), 100)
 
-  t.throws(() => validateLimit(0))
-  t.throws(() => validateLimit(-1))
-  t.throws(() => validateLimit(101))
-  t.throws(() => validateLimit(0.5))
-  t.throws(() => validateLimit('12'))
-  t.throws(() => validateLimit(Number.NaN))
+  t.throws(() => validateLimit(0), {message: 'limit must be an integer between 1 and 100'})
+  t.throws(() => validateLimit(-1), {message: 'limit must be an integer between 1 and 100'})
+  t.throws(() => validateLimit(101), {message: 'limit must be an integer between 1 and 100'})
+  t.throws(() => validateLimit(0.5), {message: 'limit must be an integer between 1 and 100'})
+  t.throws(() => validateLimit('12'), {message: 'limit must be an integer between 1 and 100'})
+  t.throws(() => validateLimit(Number.NaN), {message: 'limit must be an integer between 1 and 100'})
 })
 
 test('validateAutocomplete', t => {
   t.is(validateAutocomplete(true), true)
   t.is(validateAutocomplete(false), false)
 
-  t.throws(() => validateAutocomplete(1))
-  t.throws(() => validateAutocomplete('false'))
-  t.throws(() => validateAutocomplete())
+  t.throws(() => validateAutocomplete(1), {message: 'autocomplete must be a boolean value'})
+  t.throws(() => validateAutocomplete('false'), {message: 'autocomplete must be a boolean value'})
+  t.throws(() => validateAutocomplete(), {message: 'autocomplete must be a boolean value'})
 })
 
 test('validateLonLat', t => {
@@ -56,11 +56,11 @@ test('validateLonLat', t => {
   t.deepEqual(validateLonLat(10.5, 10), [10.5, 10])
   t.deepEqual(validateLonLat(0, 10.5), [0, 10.5])
 
-  t.throws(() => validateLonLat(1, null))
-  t.throws(() => validateLonLat(null, 1))
-  t.throws(() => validateLonLat('12', '11'))
-  t.throws(() => validateLonLat(192, 6.4))
-  t.throws(() => validateLonLat(6.5, -95))
+  t.throws(() => validateLonLat(1, undefined), {message: 'lon/lat must be present together if defined'})
+  t.throws(() => validateLonLat(undefined, 1), {message: 'lon/lat must be present together if defined'})
+  t.throws(() => validateLonLat('12', '11'), {message: 'lon/lat must be float numbers'})
+  t.throws(() => validateLonLat(192, 6.4), {message: 'lon/lat must be valid WGS-84 coordinates'})
+  t.throws(() => validateLonLat(6.5, -95), {message: 'lon/lat must be valid WGS-84 coordinates'})
 })
 
 test('validateFilters', t => {
@@ -68,7 +68,7 @@ test('validateFilters', t => {
   t.deepEqual(validateFilters({foo: 'bar'}), {foo: 'bar'})
   t.deepEqual(validateFilters({foo: 'bar', cat: ''}), {foo: 'bar'})
 
-  t.throws(() => validateFilters('a'))
+  t.throws(() => validateFilters('a'), {message: 'filters are not valid'})
 })
 
 test('validateParams / all params', t => {
@@ -91,7 +91,7 @@ test('validateParams / all params', t => {
 })
 
 test('validateParams / invalid param', t => {
-  t.throws(() => validateParams({limit: 0}))
+  t.throws(() => validateParams({limit: 0}), {message: 'limit must be an integer between 1 and 100'})
 })
 
 test('validateParams / no params', t => {
@@ -99,5 +99,5 @@ test('validateParams / no params', t => {
 })
 
 test('validateParams / required params', t => {
-  t.throws(() => validateParams({limit: 3}, ['q']))
+  t.throws(() => validateParams({limit: 3}, ['q']), {message: 'q is a required parameter'})
 })
