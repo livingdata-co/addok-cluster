@@ -192,10 +192,10 @@ test('createNode / explicit kill', async t => {
 
   t.true(endCalled)
   t.is(node.status, 'closed')
-  t.true(node.killed, 'killed')
-  t.is(node.killedReason, 'test')
+  t.true(node.killCalled)
+  t.is(node.killReason, 'test')
 
-  t.throws(() => node.kill(), {message: 'Node already killed'})
+  t.throws(() => node.kill(), {message: 'Kill action has already been called on this node'})
 })
 
 test('expandParametersWithDefaults', t => {
