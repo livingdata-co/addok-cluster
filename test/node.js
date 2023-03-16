@@ -193,11 +193,16 @@ test('createNode / explicit kill', async t => {
     pyshell.emit('close')
   }
 
+  let onCloseCalled = false
+
   const node = await createNode('foo', {
     killTimeout: 1000,
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
+    },
+    onClose() {
+      onCloseCalled = true
     }
   })
 
@@ -205,6 +210,8 @@ test('createNode / explicit kill', async t => {
   t.true(node.isIdle)
 
   await node.kill('test')
+
+  t.true(onCloseCalled)
 
   t.true(endCalled)
   t.false(killCalled)
@@ -264,6 +271,114 @@ test('createNode / explicit kill + SIGKILL', async t => {
   t.true(node.cleanupCalled)
   t.is(node.cleanupReason, 'test')
   t.is(node.killReason, 'test')
+})
+
+test('createNode / pythonError', async t => {
+  const pyshell = new EventEmitter()
+
+  pyshell.send = async () => {
+    await setTimeout(100)
+    pyshell.emit('message', 'PONG!')
+  }
+
+  pyshell.end = () => {
+    pyshell.terminated = true
+    pyshell.emit('close')
+  }
+
+  const node = await createNode('foo', {
+    redisConfig: {},
+    createPyShellInstance() {
+      return pyshell
+    }
+  })
+
+  t.is(node.status, 'idle')
+  t.true(node.isIdle)
+
+  pyshell.emit('pythonError', new Error('Unexpected Python error'))
+
+  t.true(node.cleanupCalled)
+  t.is(node.cleanupReason, 'pythonError')
+})
+
+test('createNode / error', async t => {
+  const pyshell = new EventEmitter()
+
+  pyshell.send = async () => {
+    await setTimeout(100)
+    pyshell.emit('message', 'PONG!')
+  }
+
+  pyshell.end = () => {
+    pyshell.terminated = true
+    pyshell.emit('close')
+  }
+
+  const node = await createNode('foo', {
+    redisConfig: {},
+    createPyShellInstance() {
+      return pyshell
+    }
+  })
+
+  t.is(node.status, 'idle')
+  t.true(node.isIdle)
+
+  pyshell.emit('error', new Error('Unexpected error'))
+
+  t.true(node.cleanupCalled)
+  t.is(node.cleanupReason, 'error')
+
+  await node.kill() // Will do nothing
+  t.false(node.killCalled)
+})
+
+test('createNode / collect logs', async t => {
+  const pyshell = new EventEmitter()
+
+  pyshell.send = async () => {
+    await setTimeout(100)
+    pyshell.emit('message', 'PONG!')
+  }
+
+  pyshell.end = () => {
+    pyshell.terminated = true
+    pyshell.emit('close')
+  }
+
+  const logs = []
+  const errors = []
+
+  const node = await createNode('foo', {
+    logger: {
+      log(message) {
+        logs.push(message)
+      },
+      error(message) {
+        errors.push(message)
+      }
+    },
+    redisConfig: {},
+    createPyShellInstance() {
+      return pyshell
+    }
+  })
+
+  t.is(node.status, 'idle')
+  t.true(node.isIdle)
+
+  pyshell.emit('stderr', 'random stderr entry')
+  pyshell.emit('message', '{"reqId": "foo", "results": []}')
+  t.deepEqual(errors, ['random stderr entry', 'Received an unknown result from Addok node'])
+
+  pyshell.emit('message', 'random stdout entry')
+  t.deepEqual(logs, ['random stdout entry'])
+
+  await node.kill()
+
+  pyshell.emit('message', 'one more entry entry', 'Received an unknown result from Addok node')
+  t.deepEqual(logs, ['random stdout entry'])
 })
 
 test('expandParametersWithDefaults', t => {
