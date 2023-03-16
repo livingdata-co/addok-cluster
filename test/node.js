@@ -141,8 +141,10 @@ test('createNode / request timeout', async t => {
     }
   }
 
-  pyshell.end = () => {
+  pyshell.end = async () => {
+    await setTimeout(1000)
     pyshell.terminated = true
+    pyshell.emit('close')
   }
 
   const node = await createNode('foo', {
@@ -160,6 +162,8 @@ test('createNode / request timeout', async t => {
 
   await t.throwsAsync(() => resultPromise, {message: 'Addok node terminated: stalled'})
 
+  t.true(node.cleanupCalled)
+  t.is(node.cleanupReason, 'stalled')
   t.is(node.status, 'closed')
   t.false(node.isIdle)
 })
@@ -173,12 +177,24 @@ test('createNode / explicit kill', async t => {
 
   let endCalled = false
 
-  pyshell.end = () => {
+  pyshell.end = async () => {
     endCalled = true
+    await setTimeout(200)
     pyshell.terminated = true
+    pyshell.emit('close')
+  }
+
+  let killCalled = false
+
+  pyshell.kill = async () => {
+    killCalled = true
+    await setTimeout(200)
+    pyshell.terminated = true
+    pyshell.emit('close')
   }
 
   const node = await createNode('foo', {
+    killTimeout: 1000,
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
@@ -188,14 +204,66 @@ test('createNode / explicit kill', async t => {
   t.is(node.status, 'idle')
   t.true(node.isIdle)
 
-  node.kill('test')
+  await node.kill('test')
 
   t.true(endCalled)
+  t.false(killCalled)
+
   t.is(node.status, 'closed')
   t.true(node.killCalled)
+  t.true(node.cleanupCalled)
+  t.is(node.cleanupReason, 'test')
   t.is(node.killReason, 'test')
 
   t.throws(() => node.kill(), {message: 'Kill action has already been called on this node'})
+})
+
+test('createNode / explicit kill + SIGKILL', async t => {
+  const pyshell = new EventEmitter()
+  pyshell.send = async () => {
+    await setTimeout(100)
+    pyshell.emit('message', 'PONG!')
+  }
+
+  let endCalled = false
+
+  pyshell.end = async () => {
+    endCalled = true
+    await setTimeout(500)
+    pyshell.terminated = true
+    pyshell.emit('close')
+  }
+
+  let killCalled = false
+
+  pyshell.kill = async () => {
+    killCalled = true
+    await setTimeout(100)
+    pyshell.terminated = true
+    pyshell.emit('close')
+  }
+
+  const node = await createNode('foo', {
+    killTimeout: 200,
+    redisConfig: {},
+    createPyShellInstance() {
+      return pyshell
+    }
+  })
+
+  t.is(node.status, 'idle')
+  t.true(node.isIdle)
+
+  await node.kill('test')
+
+  t.true(endCalled)
+  t.true(killCalled)
+
+  t.is(node.status, 'closed')
+  t.true(node.killCalled)
+  t.true(node.cleanupCalled)
+  t.is(node.cleanupReason, 'test')
+  t.is(node.killReason, 'test')
 })
 
 test('expandParametersWithDefaults', t => {
