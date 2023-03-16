@@ -1,7 +1,7 @@
 import {EventEmitter} from 'node:events'
 import {setTimeout} from 'node:timers/promises'
 import test from 'ava'
-import {createNode, expandParametersWithDefaults, getLogger} from '../lib/node.js'
+import {createNode, expandParametersWithDefaults} from '../lib/node.js'
 
 test('createNode / startup successful', async t => {
   const pyshell = new EventEmitter()
@@ -408,17 +408,4 @@ test('expandParametersWithDefaults', t => {
     autocomplete: true,
     foo: 'bar'
   })
-})
-
-test('getLogger', t => {
-  t.is(getLogger(false), undefined)
-
-  const log = () => {}
-  const error = () => {}
-
-  t.deepEqual(getLogger({log, error}), {log, error})
-  t.deepEqual(getLogger(true), {log: console.log, error: console.error})
-
-  t.throws(() => getLogger({foo: 'bar'}), {message: 'logger must be a boolean or an object with log and error methods'})
-  t.throws(() => getLogger(0), {message: 'logger must be a boolean or an object with log and error methods'})
 })
