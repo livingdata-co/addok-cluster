@@ -15,8 +15,7 @@
   "scripts": {
     "lint": "xo",
     "test": "c8 --all ava",
-    "test-lcov": "c8 --reporter=lcov --reporter=text --all ava",
-    "cover": "coveralls < coverage/lcov.info"
+    "test-lcov": "c8 --reporter=lcov --reporter=text --all ava"
   },
   "dependencies": {
     "debug": "^4.3.4",
