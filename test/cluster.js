@@ -72,7 +72,7 @@ test('createCluster / retry on starting node / never start', async t => {
   t.is(createNodeCalled, 10)
 })
 
-test('createCluster / exec request', async t => {
+test('createCluster / exec geocode request', async t => {
   const cluster = await createCluster({numNodes: 1, createNode: createWorkingNode})
   t.is(cluster.idleNodesCount, 1)
   t.is(cluster.activeNodesCount, 1)
@@ -81,6 +81,26 @@ test('createCluster / exec request', async t => {
   t.deepEqual(results, [
     {id: 'foo', operation: 'geocode', params: {q: 'foo'}},
     {id: 'bar', operation: 'geocode', params: {q: 'foo'}}
+  ])
+})
+
+test('createCluster / exec geocode request / missing required parameter', async t => {
+  const cluster = await createCluster({numNodes: 1, createNode: createWorkingNode})
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+
+  await t.throwsAsync(() => cluster.geocode({}), {message: 'q is a required parameter'})
+})
+
+test('createCluster / exec reverse request', async t => {
+  const cluster = await createCluster({numNodes: 1, createNode: createWorkingNode})
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+
+  const results = await cluster.reverse({lon: 0, lat: 0})
+  t.deepEqual(results, [
+    {id: 'foo', operation: 'reverse', params: {lon: 0, lat: 0}},
+    {id: 'bar', operation: 'reverse', params: {lon: 0, lat: 0}}
   ])
 })
 
