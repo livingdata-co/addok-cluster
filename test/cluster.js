@@ -83,3 +83,38 @@ test('createCluster / exec request', async t => {
     {id: 'bar', operation: 'geocode', params: {q: 'foo'}}
   ])
 })
+
+test('createCluster / recreate dead nodes', async t => {
+  let createNodeCalled = 0
+  let firstOnClose = null
+
+  async function createNode(nodeId, {onClose}) {
+    createNodeCalled++
+
+    if (nodeId === 1) {
+      firstOnClose = onClose
+    }
+
+    return {
+      nodeId,
+      status: 'idle'
+    }
+  }
+
+  const cluster = await createCluster({numNodes: 1, createNode})
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+  t.is(createNodeCalled, 1)
+
+  firstOnClose()
+
+  t.is(cluster.idleNodesCount, 0)
+  t.is(cluster.activeNodesCount, 0)
+  t.is(createNodeCalled, 1)
+
+  await setTimeout(50)
+
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+  t.is(createNodeCalled, 2)
+})
