@@ -201,3 +201,38 @@ test('createCluster / request failure', async t => {
     {message: 'Unexpected error'}
   )
 })
+
+test('createCluster / terminated cluster', async t => {
+  let status = 'idle'
+
+  async function createNode(nodeId) {
+    return {
+      nodeId,
+      status,
+      async execRequest({operation, params}) {
+        await setTimeout(50)
+        return [{id: 'foo', operation, params}, {id: 'bar', operation, params}]
+      },
+      async kill() {
+        status = 'closed'
+      }
+    }
+  }
+
+  const cluster = await createCluster({numNodes: 1, createNode})
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+
+  await cluster.end()
+  t.true(cluster.terminated)
+
+  await t.throwsAsync(
+    () => cluster.geocode({q: 'foo'}),
+    {message: 'Cluster terminated'}
+  )
+
+  await t.throwsAsync(
+    () => cluster.end(),
+    {message: 'Cluster already terminated'}
+  )
+})
