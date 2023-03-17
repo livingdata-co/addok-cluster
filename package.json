@@ -40,6 +40,11 @@
       "unicorn/prevent-abbreviations": "off"
     }
   },
+  "c8": {
+    "include": [
+      "lib/*.js"
+    ]
+  },
   "engines": {
     "node": ">= 18.12"
   }
