@@ -138,3 +138,66 @@ test('createCluster / recreate dead nodes', async t => {
   t.is(cluster.activeNodesCount, 1)
   t.is(createNodeCalled, 2)
 })
+
+test('createCluster / exec aborted request', async t => {
+  const cluster = await createCluster({numNodes: 1, createNode: createWorkingNode})
+
+  const ac = new AbortController()
+  ac.abort()
+
+  await t.throwsAsync(
+    () => cluster.geocode({q: 'foo'}, {signal: ac.signal}),
+    {message: 'Aborted'}
+  )
+})
+
+test('createCluster / request with unknown priority', async t => {
+  const cluster = await createCluster({numNodes: 1, createNode: createWorkingNode})
+
+  await t.throwsAsync(
+    () => cluster.geocode({q: 'foo'}, {priority: 'foo'}),
+    {message: 'Unknown priority: foo'}
+  )
+})
+
+test('createCluster / request timeout', async t => {
+  async function createNode(nodeId) {
+    return {
+      nodeId,
+      status: 'idle',
+      async execRequest() {
+        await setTimeout(50)
+        throw new Error('Addok node terminated: stalled')
+      }
+    }
+  }
+
+  const cluster = await createCluster({numNodes: 1, createNode})
+
+  const error = await t.throwsAsync(
+    () => cluster.geocode({q: 'foo'}),
+    {message: 'The request is taking too long to complete'}
+  )
+
+  t.is(error.statusCode, 504)
+})
+
+test('createCluster / request failure', async t => {
+  async function createNode(nodeId) {
+    return {
+      nodeId,
+      status: 'idle',
+      async execRequest() {
+        await setTimeout(50)
+        throw new Error('Unexpected error')
+      }
+    }
+  }
+
+  const cluster = await createCluster({numNodes: 1, createNode})
+
+  await t.throwsAsync(
+    () => cluster.geocode({q: 'foo'}),
+    {message: 'Unexpected error'}
+  )
+})
