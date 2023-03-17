@@ -11,6 +11,7 @@ test('createNode / startup successful', async t => {
   }
 
   const node = await createNode('foo', {
+    logger: false,
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
@@ -30,6 +31,7 @@ test('createNode / startup failed - timeout', async t => {
 
   await t.throwsAsync(
     () => createNode('foo', {
+      logger: false,
       startupTimeout: 500,
       redisConfig: {},
       createPyShellInstance() {
@@ -60,6 +62,7 @@ test('createNode / request successful', async t => {
   }
 
   const node = await createNode('foo', {
+    logger: false,
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
@@ -104,6 +107,7 @@ test('createNode / request failed', async t => {
   }
 
   const node = await createNode('foo', {
+    logger: false,
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
@@ -148,6 +152,7 @@ test('createNode / request timeout', async t => {
   }
 
   const node = await createNode('foo', {
+    logger: false,
     requestTimeout: 500,
     redisConfig: {},
     createPyShellInstance() {
@@ -196,6 +201,7 @@ test('createNode / explicit kill', async t => {
   let onCloseCalled = false
 
   const node = await createNode('foo', {
+    logger: false,
     killTimeout: 1000,
     redisConfig: {},
     createPyShellInstance() {
@@ -251,6 +257,7 @@ test('createNode / explicit kill + SIGKILL', async t => {
   }
 
   const node = await createNode('foo', {
+    logger: false,
     killTimeout: 200,
     redisConfig: {},
     createPyShellInstance() {
@@ -286,7 +293,18 @@ test('createNode / pythonError', async t => {
     pyshell.emit('close')
   }
 
+  const errors = []
+  const logs = []
+
   const node = await createNode('foo', {
+    logger: {
+      log(message) {
+        logs.push(message)
+      },
+      error(message) {
+        errors.push(message)
+      }
+    },
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
@@ -300,6 +318,7 @@ test('createNode / pythonError', async t => {
 
   t.true(node.cleanupCalled)
   t.is(node.cleanupReason, 'pythonError')
+  t.deepEqual(errors, ['Unexpected Python error'])
 })
 
 test('createNode / error', async t => {
@@ -315,7 +334,18 @@ test('createNode / error', async t => {
     pyshell.emit('close')
   }
 
+  const errors = []
+  const logs = []
+
   const node = await createNode('foo', {
+    logger: {
+      log(message) {
+        logs.push(message)
+      },
+      error(message) {
+        errors.push(message)
+      }
+    },
     redisConfig: {},
     createPyShellInstance() {
       return pyshell
@@ -329,6 +359,7 @@ test('createNode / error', async t => {
 
   t.true(node.cleanupCalled)
   t.is(node.cleanupReason, 'error')
+  t.deepEqual(errors, ['Unexpected error'])
 
   await node.kill() // Will do nothing
   t.false(node.killCalled)
