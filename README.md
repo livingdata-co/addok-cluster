@@ -115,3 +115,7 @@ If an `AbortSignal` instance is provided, its status is checked just before forw
 ```js
 cluster.end()
 ```
+
+## Sponsorship
+
+This software is maintained by [Living Data](https://livingdata.co), thanks to the support of partners such as [Etalab](https://www.etalab.gouv.fr) (API Adresse) and [IGN](https://www.ign.fr) (Géoplateforme).
