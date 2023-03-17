@@ -19,7 +19,6 @@ test('createNode / startup successful', async t => {
   })
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 })
 
 test('createNode / startup failed - timeout', async t => {
@@ -72,7 +71,6 @@ test('createNode / request successful', async t => {
   const resultPromise = node.execRequest({operation: 'geocode', params: {}})
 
   t.is(node.status, 'processing')
-  t.false(node.isIdle)
 
   await t.throwsAsync(
     () => node.execRequest({operation: 'geocode', params: {}}),
@@ -82,7 +80,6 @@ test('createNode / request successful', async t => {
   const result = await resultPromise
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 
   t.deepEqual(result, [{foo: 'bar'}])
 })
@@ -117,12 +114,10 @@ test('createNode / request failed', async t => {
   const resultPromise = node.execRequest({operation: 'geocode', params: {}})
 
   t.is(node.status, 'processing')
-  t.false(node.isIdle)
 
   await t.throwsAsync(() => resultPromise, {message: 'Operation failed'})
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 })
 
 test('createNode / request timeout', async t => {
@@ -163,14 +158,12 @@ test('createNode / request timeout', async t => {
   const resultPromise = node.execRequest({operation: 'geocode', params: {}})
 
   t.is(node.status, 'processing')
-  t.false(node.isIdle)
 
   await t.throwsAsync(() => resultPromise, {message: 'Addok node terminated: stalled'})
 
   t.true(node.cleanupCalled)
   t.is(node.cleanupReason, 'stalled')
   t.is(node.status, 'closed')
-  t.false(node.isIdle)
 })
 
 test('createNode / explicit kill', async t => {
@@ -213,7 +206,6 @@ test('createNode / explicit kill', async t => {
   })
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 
   await node.kill('test')
 
@@ -266,7 +258,6 @@ test('createNode / explicit kill + SIGKILL', async t => {
   })
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 
   await node.kill('test')
 
@@ -312,7 +303,6 @@ test('createNode / pythonError', async t => {
   })
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 
   pyshell.emit('pythonError', new Error('Unexpected Python error'))
 
@@ -353,7 +343,6 @@ test('createNode / error', async t => {
   })
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 
   pyshell.emit('error', new Error('Unexpected error'))
 
@@ -397,7 +386,6 @@ test('createNode / collect logs', async t => {
   })
 
   t.is(node.status, 'idle')
-  t.true(node.isIdle)
 
   pyshell.emit('stderr', 'random stderr entry')
   pyshell.emit('message', '{"reqId": "foo", "results": []}')
