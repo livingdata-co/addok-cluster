@@ -1,6 +1,6 @@
 # addok-cluster
 
-![npm](https://img.shields.io/npm/v/addok-cluster) ![node-current](https://img.shields.io/node/v/addok-cluster) [![Coverage Status](https://coveralls.io/repos/github/livingdata-co/addok-cluster/badge.svg)](https://coveralls.io/github/livingdata-co/addok-cluster) ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/addok-cluster)
+![npm](https://img.shields.io/npm/v/addok-cluster) ![node-current](https://img.shields.io/node/v/addok-cluster) [![Coverage Status](https://coveralls.io/repos/github/livingdata-co/addok-cluster/badge.svg?branch=master)](https://coveralls.io/github/livingdata-co/addok-cluster?branch=master) ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/addok-cluster)
 
 A very fast and efficient way to use [addok](https://github.com/addok/addok) geocoding capabilities in your Node.js process.
 
