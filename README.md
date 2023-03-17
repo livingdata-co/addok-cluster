@@ -12,6 +12,7 @@ A very fast and efficient way to use [addok](https://github.com/addok/addok) geo
 - Fast priority queue (high, medium, low)
 - Supports `AbortController`
 - Auto-restart nodes
+- Handle multiple Redis databases (round robin)
 
 ## Prerequisites
 
