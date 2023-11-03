@@ -37,7 +37,13 @@
         "error",
         "never"
       ],
-      "unicorn/prevent-abbreviations": "off"
+      "unicorn/prevent-abbreviations": "off",
+      "import/order": [
+        "error",
+        {
+          "newlines-between": "ignore"
+        }
+      ]
     }
   },
   "c8": {
