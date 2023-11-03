@@ -38,6 +38,7 @@
         "never"
       ],
       "unicorn/prevent-abbreviations": "off",
+      "unicorn/prefer-event-target": "off",
       "import/order": [
         "error",
         {
