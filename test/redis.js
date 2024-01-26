@@ -1,7 +1,9 @@
 import process from 'node:process'
 
+import fs from 'node:fs'
+import tmp from 'tmp'
 import test from 'ava'
-import {redisUrlToConfig, computeAddokRedisConfigs, createRedisRoundRobin} from '../lib/redis.js'
+import {redisUrlToConfig, computeAddokRedisConfigs, createRedisRoundRobin, createInstance} from '../lib/redis.js'
 
 test('redisUrlToConfig', t => {
   t.deepEqual(redisUrlToConfig('redis://foo:12345'), {host: 'foo', port: '12345'})
@@ -47,4 +49,21 @@ test('createRedisRoundRobin', t => {
   t.deepEqual(rr.getConfig(), {host: 'foo', port: '6379'})
   t.deepEqual(rr.getConfig(), {host: 'bar', port: '6380'})
   t.deepEqual(rr.getConfig(), {host: 'foo', port: '6379'})
+})
+
+test('createInstance', async t => {
+  const tempDir = tmp.dirSync({unsafeCleanup: true})
+  const basePath = tempDir.name
+
+  const {close, socketPath} = await createInstance(basePath, {dropExistingDump: true})
+
+  t.true(fs.existsSync(socketPath))
+
+  await close()
+
+  if (fs.existsSync(socketPath)) {
+    fs.unlinkSync(socketPath)
+  }
+
+  t.false(fs.existsSync(socketPath))
 })
