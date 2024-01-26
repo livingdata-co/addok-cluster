@@ -40,6 +40,7 @@ const cluster = await createCluster(options)
 | `ADDOK_CLUSTER_NUM_NODES` | `numNodes` | Number of nodes to instantiate (default to number of CPUs) |
 | `ADDOK_CONFIG_MODULE` | `addokConfigModule` | Path to addok configuration file |
 | `ADDOK_REDIS_URL` | `addokRedisUrl` | Connection string to addok Redis instance (can be an array) |
+| `ADDOK_REDIS_DATA_PATH` | `addokRedisDataPath` | Path to addok data file |
 
 ## Use
 
