@@ -19,8 +19,11 @@
   },
   "dependencies": {
     "debug": "^4.3.4",
+    "execa": "^8.0.1",
     "http-errors": "^2.0.0",
+    "ioredis": "^5.3.2",
     "lodash-es": "^4.17.21",
+    "nanoid": "^5.0.4",
     "python-shell": "^5.0.0",
     "supports-color": "^9.4.0"
   },
