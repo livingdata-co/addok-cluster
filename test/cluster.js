@@ -1,5 +1,6 @@
 import {cpus} from 'node:os'
 import {setTimeout} from 'node:timers/promises'
+import tmp from 'tmp'
 import test from 'ava'
 import {getNumNodes, createCluster} from '../lib/cluster.js'
 
@@ -235,4 +236,28 @@ test('createCluster / terminated cluster', async t => {
     () => cluster.end(),
     {message: 'Cluster already terminated'}
   )
+})
+
+test('createCluster / exec geocode request with addokRedisDataPath', async t => {
+  t.context.tempDir = tmp.dirSync({unsafeCleanup: true})
+  t.context.addokRedisDataPath = t.context.tempDir.name
+
+  const {addokRedisDataPath} = t.context
+
+  const cluster = await createCluster({
+    numNodes: 1,
+    createNode: createWorkingNode,
+    addokRedisDataPath
+  })
+
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+
+  const results = await cluster.geocode({q: 'foo'})
+  t.deepEqual(results, [
+    {id: 'foo', operation: 'geocode', params: {q: 'foo'}},
+    {id: 'bar', operation: 'geocode', params: {q: 'foo'}}
+  ])
+
+  t.context.tempDir.removeCallback()
 })
