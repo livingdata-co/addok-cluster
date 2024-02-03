@@ -18,18 +18,15 @@ test('redisUrlToConfig', t => {
   t.throws(() => redisUrlToConfig('http://foo'))
 })
 
-test('computeAddokRedisConfigs / env var', t => {
-  process.env.ADDOK_REDIS_URL = 'redis://localhost:6379,redis://localhost:6380,unix:/run/redis.sock'
-  t.deepEqual(computeAddokRedisConfigs(), [
+test('computeAddokRedisConfigs / string with multiple services', t => {
+  t.deepEqual(computeAddokRedisConfigs('redis://localhost:6379,redis://localhost:6380,unix:/run/redis.sock'), [
     {host: 'localhost', port: '6379'},
     {host: 'localhost', port: '6380'},
     {socketPath: '/run/redis.sock'}
   ])
 })
 
-test('computeAddokRedisConfigs / param', t => {
-  delete process.env.ADDOK_REDIS_URL
-
+test('computeAddokRedisConfigs / array', t => {
   t.deepEqual(computeAddokRedisConfigs(['redis://foo:6379', 'redis://bar:6380', 'unix:/run/redis.sock']), [
     {host: 'foo', port: '6379'},
     {host: 'bar', port: '6380'},
