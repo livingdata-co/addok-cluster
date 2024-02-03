@@ -13,6 +13,7 @@ A very fast and efficient way to use [addok](https://github.com/addok/addok) geo
 - Supports `AbortController`
 - Auto-restart nodes
 - Handle multiple Redis databases (round robin)
+- Managed Redis server (optional)
 
 ## Prerequisites
 
@@ -40,6 +41,8 @@ const cluster = await createCluster(options)
 | `ADDOK_CLUSTER_NUM_NODES` | `numNodes` | Number of nodes to instantiate (default to number of CPUs) |
 | `ADDOK_CONFIG_MODULE` | `addokConfigModule` | Path to addok configuration file |
 | `ADDOK_REDIS_URL` | `addokRedisUrl` | Connection string to addok Redis instance (can be an array) |
+| `ADDOK_REDIS_DATA_DIR` | `redisDataDir` | Path to Redis data directory (enable managed Redis) |
+| `ADDOK_REDIS_STARTUP_TIMEOUT` | `redisStartupTimeout` | Duration in milliseconds allowed to Redis to start (managed Redis only) |
 
 ## Use
 

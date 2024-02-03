@@ -21,6 +21,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
+      - name: Setup redis
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: "7"
+          auto-start: false
       - run: yarn --frozen-lockfile
       - run: yarn lint
       - run: yarn test-lcov
