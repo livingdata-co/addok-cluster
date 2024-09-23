@@ -236,3 +236,54 @@ test('createCluster / terminated cluster', async t => {
     {message: 'Cluster already terminated'}
   )
 })
+
+// We want to test that the cluster will continue to exec requests even when all nodes must be restarted
+test('createCluster / retry on execRequest', async t => {
+  let execRequestCalled = 0
+
+  async function createNode(nodeId, {onClose}) {
+    const node = {
+      nodeId,
+      status: 'idle'
+    }
+
+    node.execRequest = async () => {
+      execRequestCalled++
+      await setTimeout(50)
+
+      if (node.status === 'idle') {
+        node.status = 'closed'
+        onClose()
+        throw new Error('Unable to exec request')
+      }
+
+      throw new Error('Why are you calling me?')
+    }
+
+    await setTimeout(50)
+    return node
+  }
+
+  const cluster = await createCluster({numNodes: 2, createNode})
+  t.is(cluster.idleNodesCount, 2)
+
+  await Promise.all([
+    'foo',
+    'bar',
+    'baz',
+    'qux',
+    'quux',
+    'corge',
+    'grault',
+    'garply',
+    'waldo',
+    'fred'
+  ].map(async q => {
+    await t.throwsAsync(
+      async () => cluster.geocode({q}),
+      {message: 'Unable to exec request'}
+    )
+  }))
+
+  t.is(execRequestCalled, 10)
+})
