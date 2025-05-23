@@ -17,7 +17,7 @@ A very fast and efficient way to use [addok](https://github.com/addok/addok) geo
 
 ## Prerequisites
 
-- Node.js 18 LTS and above
+- Node.js 20 LTS and above
 - Be able to use [ESM](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
 - A working environment for addok (Python, Redis, dependencies…)
 
