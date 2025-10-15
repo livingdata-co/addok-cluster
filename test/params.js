@@ -1,5 +1,14 @@
 import test from 'ava'
-import {isFirstCharValid, isNullOrUndefined, validateQ, validateLimit, validateAutocomplete, validateLonLat, validateFilters, validateParams} from '../lib/params.js'
+import {
+  isFirstCharValid,
+  isNullOrUndefined,
+  validateQ,
+  validateLimit,
+  validateAutocomplete,
+  validateLonLat,
+  validateFilters,
+  validateParams
+} from '../lib/params.js'
 
 test('isFirstCharValid', t => {
   t.false(isFirstCharValid('---'))

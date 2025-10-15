@@ -31,7 +31,7 @@
     "ava": "^6.4.1",
     "c8": "^10.1.3",
     "tmp": "^0.2.5",
-    "xo": "^0.56.0"
+    "xo": "^0.60.0"
   },
   "xo": {
     "semicolon": false,
@@ -41,6 +41,7 @@
         "error",
         "never"
       ],
+      "promise/prefer-await-to-then": "off",
       "unicorn/prevent-abbreviations": "off",
       "unicorn/prefer-event-target": "off",
       "import/order": [
