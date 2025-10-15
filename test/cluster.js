@@ -237,6 +237,77 @@ test('createCluster / terminated cluster', async t => {
   )
 })
 
+test('createCluster / onTerminate hook on explicit end', async t => {
+  let status = 'idle'
+  let onTerminateCalled = false
+  let terminateReason = null
+
+  async function createNode(nodeId) {
+    return {
+      nodeId,
+      status,
+      async execRequest({operation, params}) {
+        await setTimeout(50)
+        return [{id: 'foo', operation, params}, {id: 'bar', operation, params}]
+      },
+      async kill() {
+        status = 'closed'
+      }
+    }
+  }
+
+  const cluster = await createCluster({
+    numNodes: 1,
+    createNode,
+    onTerminate(reason) {
+      onTerminateCalled = true
+      terminateReason = reason
+    }
+  })
+
+  t.is(cluster.idleNodesCount, 1)
+  t.is(cluster.activeNodesCount, 1)
+  t.false(onTerminateCalled)
+
+  await cluster.end()
+  t.true(cluster.terminated)
+  t.true(onTerminateCalled)
+  t.is(terminateReason, 'cluster stopped')
+})
+
+test('createCluster / onTerminate hook on too many failures', async t => {
+  let createNodeCalled = 0
+  let onTerminateCalled = false
+  let terminateReason = null
+
+  async function createNode() {
+    createNodeCalled++
+    throw new Error('Unable to start node')
+  }
+
+  const cluster = createCluster({
+    numNodes: 1,
+    createNode,
+    maxConsecutiveFailedStartup: 5,
+    onTerminate(reason) {
+      onTerminateCalled = true
+      terminateReason = reason
+    }
+  })
+
+  await t.throwsAsync(
+    () => cluster,
+    {message: 'Unable to start all required nodes'}
+  )
+
+  // Wait a bit to ensure onTerminate is called
+  await setTimeout(50)
+
+  t.is(createNodeCalled, 5)
+  t.true(onTerminateCalled)
+  t.is(terminateReason, 'Too many consecutive failures')
+})
+
 // We want to test that the cluster will continue to exec requests even when all nodes must be restarted
 test('createCluster / retry on execRequest', async t => {
   let execRequestCalled = 0
