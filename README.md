@@ -77,6 +77,22 @@ const results = await cluster.geocode(params, options)
 | `limit` | Number of returned results | `5` |
 | `filters` | Additional filters (depend on addok config) | `{}` |
 
+#### Multiple filter values
+
+Filter values can be provided as a string (single value) or as an array of strings (multiple values with OR logic):
+
+```js
+const params = {
+  q: 'rue de la paix',
+  filters: {
+    // Single value (backward compatible)
+    type: 'street',
+    // Multiple values (OR logic)
+    postcode: ['75001', '75002', '75003']
+  }
+}
+```
+
 ### Reverse geocode
 
 ```js
@@ -102,6 +118,8 @@ const results = await cluster.reverse(params, options)
 | `lon`, `lat` | Coordinates of reference position (required) | |
 | `limit` | Number of returned results | `5` |
 | `filters` | Additional filters (depend on addok config) | `{}` |
+
+Filter values can be provided as a string (single value) or as an array of strings (multiple values with OR logic). See the [Multiple filter values](#multiple-filter-values) section for more details.
 
 ### Options
 
