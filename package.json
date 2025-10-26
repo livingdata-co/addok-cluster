@@ -21,7 +21,7 @@
     "debug": "^4.4.3",
     "execa": "^8.0.1",
     "http-errors": "^2.0.0",
-    "ioredis": "^5.8.1",
+    "ioredis": "^5.8.2",
     "lodash-es": "^4.17.21",
     "nanoid": "^5.1.6",
     "python-shell": "^5.0.0",
