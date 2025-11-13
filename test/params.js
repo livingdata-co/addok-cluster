@@ -6,7 +6,6 @@ import {
   validateLimit,
   validateAutocomplete,
   validateLonLat,
-  formatFilterValue,
   validateFilters,
   validateParams
 } from '../lib/params.js'
@@ -81,36 +80,17 @@ test('validateFilters', t => {
   t.throws(() => validateFilters('a'), {message: 'filters are not valid'})
 })
 
-test('formatFilterValue', t => {
-  // String values (backward compatibility)
-  t.is(formatFilterValue('bar'), 'bar')
-  t.is(formatFilterValue('75001'), '75001')
-
-  // Array values (new feature)
-  t.is(formatFilterValue(['bar', 'baz']), 'bar+baz')
-  t.is(formatFilterValue(['75001', '75002', '75003']), '75001+75002+75003')
-  t.is(formatFilterValue(['single']), 'single')
-
-  // Empty array
-  t.is(formatFilterValue([]), '')
-
-  // Invalid values
-  t.throws(() => formatFilterValue(123), {message: 'filter values must be strings or arrays of strings'})
-  t.throws(() => formatFilterValue(['valid', 123]), {message: 'filter values must be strings or arrays of strings'})
-  t.throws(() => formatFilterValue({foo: 'bar'}), {message: 'filter values must be strings or arrays of strings'})
-})
-
 test('validateFilters with array values', t => {
   // Single string values (backward compatibility)
   t.deepEqual(validateFilters({postcode: '75001'}), {postcode: '75001'})
 
-  // Array values
-  t.deepEqual(validateFilters({postcode: ['75001', '75002']}), {postcode: '75001+75002'})
+  // Array values - preserved as arrays
+  t.deepEqual(validateFilters({postcode: ['75001', '75002']}), {postcode: ['75001', '75002']})
   t.deepEqual(validateFilters({
     postcode: ['75001', '75002'],
     citycode: '75056'
   }), {
-    postcode: '75001+75002',
+    postcode: ['75001', '75002'],
     citycode: '75056'
   })
 
@@ -120,12 +100,20 @@ test('validateFilters with array values', t => {
     postcode: ['75001', '75002', '75003']
   }), {
     type: 'street',
-    postcode: '75001+75002+75003'
+    postcode: ['75001', '75002', '75003']
   })
+
+  // Single item array
+  t.deepEqual(validateFilters({postcode: ['75001']}), {postcode: ['75001']})
+
+  // Empty array - should be ignored
+  t.deepEqual(validateFilters({postcode: []}), {})
+  t.deepEqual(validateFilters({postcode: [], type: 'street'}), {type: 'street'})
 
   // Invalid filter values
   t.throws(() => validateFilters({postcode: 123}), {message: 'filter values must be strings or arrays of strings'})
   t.throws(() => validateFilters({postcode: ['valid', 123]}), {message: 'filter values must be strings or arrays of strings'})
+  t.throws(() => validateFilters({postcode: {foo: 'bar'}}), {message: 'filter values must be strings or arrays of strings'})
 })
 
 test('validateParams / all params', t => {
@@ -157,7 +145,7 @@ test('validateParams / filters with array values', t => {
   }), {
     q: 'rue de la paix',
     filters: {
-      postcode: '75001+75002',
+      postcode: ['75001', '75002'],
       type: 'street'
     }
   })
