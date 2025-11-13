@@ -93,6 +93,8 @@ const params = {
 }
 ```
 
+**Note:** This requires addok to support array values in filters. Make sure your addok version supports the new filter API.
+
 ### Reverse geocode
 
 ```js
