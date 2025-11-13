@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x, 22.x, 24.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +29,8 @@ jobs:
       - run: npm run lint
       - run: npm run test-lcov
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on-error: false
+
